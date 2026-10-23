@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "advrobust"
+version = "0.1.0"
+description = "Adversarial robustness experiments: FGSM, adversarial training, MNIST and STL-10"
+requires-python = ">=3.10"
+dependencies = [
+    "torch",
+    "torchvision",
+    "numpy",
+    "pandas",
+    "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff", "jupyter"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

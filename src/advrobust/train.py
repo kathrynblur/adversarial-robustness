@@ -11,7 +11,7 @@ for predictions
 import torch
 import torch.nn.functional as F
 
-from .data import device
+from .utils import device
 
 from .models import (
     BinaryLogReg, MulticlassLogReg, BinaryCNNMNIST,

@@ -17,15 +17,9 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset, random_split
 from torchvision import datasets, transforms
 
-# Reproducibility
-SEED = 1234
-random.seed(SEED)
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-torch.cuda.manual_seed_all(SEED)
+from .utils import SEED, device, set_seed
 
-# Device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+set_seed()
 
 # Download MNIST
 transform = transforms.ToTensor()

@@ -43,6 +43,9 @@ def accuracy_under_perturbation(model, loader, perturb, binary):
 
     return correct / total
 
+def evaluate_clean(model, loader, binary):
+    return accuracy_under_perturbation(model, loader, lambda x, y: x, binary)
+
 
 def evaluate_fgsm(model, loader, epsilon, binary):
     loss_fn = bce if binary else F.cross_entropy

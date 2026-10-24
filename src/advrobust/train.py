@@ -568,97 +568,10 @@ def train_multiclass_resnet_adversarial(train_loader, epsilon=0.015, adv_weight=
     return model
 
 
-# Shared evaluation helpers
+# Shared evaluation helper
 
 def bce(probs, y):
     """
     Binary cross-entropy loss
     """
     return F.binary_cross_entropy(probs, y.float())
-
-def evaluate_fgsm_binary(model, loader, epsilon):
-
-    model.eval()
-
-    correct = 0
-    total = 0
-
-    for x, y in loader:
-        x = x.to(device)
-        y = y.to(device)
-
-        x_adv = fgsm_attack(model, x, y, epsilon, bce)
-
-        with torch.no_grad():
-            probs = model(x_adv)
-            preds = (probs > 0.5).long()
-
-        correct += (preds == y).sum().item()
-        total += x.size(0)
-
-    return correct / total
-
-def evaluate_fgsm_multiclass(model, loader, epsilon):
-
-    model.eval()
-
-    correct = 0
-    total = 0
-
-    for x, y in loader:
-        x = x.to(device)
-        y = y.to(device)
-
-        x_adv = fgsm_attack(model, x, y, epsilon, F.cross_entropy)
-
-        with torch.no_grad():
-            logits = model(x_adv)
-            preds = logits.argmax(1)
-
-        correct += (preds == y).sum().item()
-        total += x.size(0)
-
-    return correct / total
-
-def evaluate_noise_binary(model, loader, epsilon, noise_fn):
-
-    model.eval()
-
-    correct = 0
-    total = 0
-
-    for x, y in loader:
-        x = x.to(device)
-        y = y.to(device)
-
-        x_noise = noise_fn(x, epsilon)
-
-        with torch.no_grad():
-            probs = model(x_noise)
-            preds = (probs > 0.5).long()
-
-        correct += (preds == y).sum().item()
-        total += x.size(0)
-
-    return correct / total
-
-def evaluate_noise_multiclass(model, loader, epsilon, noise_fn):
-    model.eval()
-
-    correct = 0
-    total = 0
-
-    for x, y in loader:
-        x = x.to(device)
-        y = y.to(device)
-
-        x_noise = noise_fn(x, epsilon)
-
-        with torch.no_grad():
-            logits = model(x_noise)
-            preds = logits.argmax(1)
-
-        correct += (preds == y).sum().item()
-        total += x.size(0)
-
-    return correct / total

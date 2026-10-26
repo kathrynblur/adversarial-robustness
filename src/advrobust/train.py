@@ -46,11 +46,13 @@ def train(
     reg_strength=1e-4,
     adv_epsilon=None,
     adv_weight=0.5,
+    augment=None,
 ):
     """
     Train a model in place and return it
 
     reg_type: None, "l1" or "l2" (logistic regression only)
+        augment: None, or a function that takes a batch x and returns an augmented batch
     adv_epsilon: None for standard training, a number for FGSM adversarial training
     """
     model = model.to(device)
@@ -73,6 +75,9 @@ def train(
         for x, y in train_loader:
             x = x.to(device)
             y = y.to(device)
+
+            if augment is not None:
+                x = augment(x)
 
             if adv_epsilon is not None:
                 # create adversarial examples using the current model

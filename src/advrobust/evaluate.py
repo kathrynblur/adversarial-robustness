@@ -8,7 +8,7 @@ Multiclass models output logits (argmax)
 import torch
 import torch.nn.functional as F
 
-from .attacks import fgsm_attack
+from .attacks import fgsm_attack, pgd_attack
 from .train import bce
 from .utils import device
 
@@ -42,6 +42,14 @@ def accuracy_under_perturbation(model, loader, perturb, binary):
         total += x.size(0)
 
     return correct / total
+
+def evaluate_pgd(model, loader, epsilon, binary, steps=10):
+    loss_fn = bce if binary else F.cross_entropy
+    return accuracy_under_perturbation(
+        model, loader,
+        lambda x, y: pgd_attack(model, x, y, epsilon, loss_fn, steps=steps),
+        binary,
+    )
 
 def evaluate_clean(model, loader, binary):
     return accuracy_under_perturbation(model, loader, lambda x, y: x, binary)

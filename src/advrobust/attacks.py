@@ -62,3 +62,46 @@ def random_sign_attack(x, epsilon):
     x_adv = torch.clamp(x_adv, 0, 1)
 
     return x_adv.detach()
+
+def pgd_attack(model, x, y, epsilon, loss_fn, steps=10, step_size=None, random_start=True):
+    """
+    Applies the Projected Gradient Descent (PGD) attack
+
+    PGD repeats small FGSM-like steps. After each step, the image is projected
+    back into the epsilon-ball around the original image and into [0, 1]
+
+    step_size defaults to 2.5 * epsilon / steps (Madry et al., 2018)
+    """
+    if step_size is None:
+        step_size = 2.5 * epsilon / steps
+
+    was_training = model.training
+    model.eval()
+
+    x_orig = x.clone().detach()
+
+    # start at a random point inside the epsilon-ball
+    if random_start:
+        x_adv = x_orig + torch.empty_like(x_orig).uniform_(-epsilon, epsilon)
+        x_adv = torch.clamp(x_adv, 0, 1)
+    else:
+        x_adv = x_orig.clone()
+
+    for _ in range(steps):
+        x_adv = x_adv.detach().requires_grad_(True)
+
+        loss = loss_fn(model(x_adv), y)
+
+        # gradient w.r.t. the input only (does not touch the weight gradients)
+        grad = torch.autograd.grad(loss, x_adv)[0]
+
+        x_adv = x_adv.detach() + step_size * grad.sign()
+
+        # project back into the epsilon-ball and the valid pixel range
+        x_adv = torch.max(torch.min(x_adv, x_orig + epsilon), x_orig - epsilon)
+        x_adv = torch.clamp(x_adv, 0, 1)
+
+    if was_training:
+        model.train()
+
+    return x_adv.detach()

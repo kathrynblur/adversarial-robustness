@@ -1,0 +1,18 @@
+name: stl10_multiclass_resnet
+dataset: stl10
+task: multiclass
+seed: 1234
+
+model:
+  name: MulticlassResNetSTL10
+
+train:
+  epochs: 20
+  lr: 0.001
+  optimizer: adam
+
+eval:
+  epsilons: [0.0, 0.005, 0.01, 0.015, 0.02, 0.025]
+  attacks: [fgsm, pgd]
+  pgd_steps: 10
+  max_samples: 2000       # PGD on all 8000 test images is slow

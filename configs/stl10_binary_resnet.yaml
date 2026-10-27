@@ -1,0 +1,17 @@
+name: stl10_binary_resnet
+dataset: stl10
+task: binary
+seed: 1234
+
+model:
+  name: BinaryResNetSTL10   # pretrained ResNet-18, frozen backbone
+
+train:
+  epochs: 20
+  lr: 0.001
+  optimizer: adam
+
+eval:
+  epsilons: [0.0, 0.005, 0.01, 0.015, 0.02, 0.025]
+  attacks: [fgsm, pgd]
+  pgd_steps: 10

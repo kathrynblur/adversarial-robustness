@@ -1,0 +1,57 @@
+{
+  "config": {
+    "name": "stl10_binary_cnn_bn",
+    "dataset": "stl10",
+    "task": "binary",
+    "seed": 1234,
+    "model": {
+      "name": "BinaryCNNSTL10BN"
+    },
+    "train": {
+      "epochs": 40,
+      "lr": 0.001,
+      "optimizer": "adam",
+      "batch_size": 32
+    },
+    "eval": {
+      "epsilons": [
+        0.0,
+        0.005,
+        0.01,
+        0.015,
+        0.02,
+        0.025
+      ],
+      "attacks": [
+        "fgsm",
+        "pgd"
+      ],
+      "pgd_steps": 10
+    }
+  },
+  "epsilons": [
+    0.0,
+    0.005,
+    0.01,
+    0.015,
+    0.02,
+    0.025
+  ],
+  "clean": 0.74375,
+  "fgsm": [
+    0.74375,
+    0.4475,
+    0.21625,
+    0.093125,
+    0.04625,
+    0.0325
+  ],
+  "pgd": [
+    0.74375,
+    0.43375,
+    0.185,
+    0.065,
+    0.03125,
+    0.024375
+  ]
+}

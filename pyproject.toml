@@ -13,10 +13,14 @@ dependencies = [
     "numpy",
     "pandas",
     "matplotlib",
+    "pyyaml",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff", "jupyter"]
+
+[project.scripts]
+advrobust = "advrobust.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

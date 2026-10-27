@@ -1,0 +1,17 @@
+name: mnist_binary_logreg
+dataset: mnist
+task: binary            # binary (3 vs 8) or multiclass
+seed: 1234
+
+model:
+  name: BinaryLogReg
+
+train:
+  epochs: 15
+  lr: 0.05
+  optimizer: sgd
+
+eval:
+  epsilons: [0.0, 0.05, 0.1, 0.15, 0.2, 0.25]
+  attacks: [fgsm, pgd]
+  pgd_steps: 10

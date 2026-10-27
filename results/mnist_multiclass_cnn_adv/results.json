@@ -1,0 +1,58 @@
+{
+  "config": {
+    "name": "mnist_multiclass_cnn_adv",
+    "dataset": "mnist",
+    "task": "multiclass",
+    "seed": 1234,
+    "model": {
+      "name": "MulticlassCNNMNIST"
+    },
+    "train": {
+      "epochs": 15,
+      "lr": 0.01,
+      "optimizer": "sgd",
+      "adv_epsilon": 0.15,
+      "adv_weight": 0.5
+    },
+    "eval": {
+      "epsilons": [
+        0.0,
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25
+      ],
+      "attacks": [
+        "fgsm",
+        "pgd"
+      ],
+      "pgd_steps": 10
+    }
+  },
+  "epsilons": [
+    0.0,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25
+  ],
+  "clean": 0.9928,
+  "fgsm": [
+    0.9928,
+    0.9848,
+    0.9696,
+    0.9425,
+    0.8995,
+    0.8143
+  ],
+  "pgd": [
+    0.9928,
+    0.9822,
+    0.9546,
+    0.8862,
+    0.6283,
+    0.1205
+  ]
+}

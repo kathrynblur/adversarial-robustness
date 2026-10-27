@@ -223,3 +223,4 @@ saved_models/
 *.pt
 data
 wandb/
+!app/weights/*.pt

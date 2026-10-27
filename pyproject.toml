@@ -18,6 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest", "ruff", "jupyter", "wandb"]
+serve = ["fastapi", "uvicorn", "python-multipart", "pillow"]
 
 [project.scripts]
 advrobust = "advrobust.cli:main"

@@ -47,6 +47,7 @@ def train(
     adv_epsilon=None,
     adv_weight=0.5,
     augment=None,
+    log_fn=None,
 ):
     """
     Train a model in place and return it
@@ -54,6 +55,8 @@ def train(
     reg_type: None, "l1" or "l2" (logistic regression only)
         augment: None, or a function that takes a batch x and returns an augmented batch
     adv_epsilon: None for standard training, a number for FGSM adversarial training
+    log_fn: None, or a function that receives a dict of metrics after each epoch
+            (for example wandb's run.log)
     """
     model = model.to(device)
     loss_fn = bce if binary else F.cross_entropy
@@ -102,6 +105,9 @@ def train(
             total_loss += loss.item() * x.size(0)
             total_correct += (preds == y.long()).sum().item()
             total += x.size(0)
+
+        if log_fn is not None:
+            log_fn({"epoch": epoch, "train_loss": total_loss / total, "train_acc": total_correct / total})
 
         if epoch % 5 == 0 or epoch == 1:
             print("epoch", epoch, "| loss:", round(total_loss / total, 4), "| train acc:", round(total_correct / total, 4))

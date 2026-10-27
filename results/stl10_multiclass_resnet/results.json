@@ -27,7 +27,8 @@
       ],
       "pgd_steps": 10,
       "max_samples": 2000
-    }
+    },
+    "tracking": "wandb"
   },
   "epsilons": [
     0.0,

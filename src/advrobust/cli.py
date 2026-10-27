@@ -4,6 +4,7 @@ Run experiments from YAML config files
 Usage:
     python -m advrobust.cli configs/mnist_binary_cnn.yaml
     python -m advrobust.cli configs/*.yaml
+    python -m advrobust.cli configs/*.yaml --tracking wandb
 """
 
 import argparse
@@ -47,11 +48,54 @@ def get_datasets(dataset, task):
     raise ValueError(f"unknown dataset: {dataset}")
 
 
+def start_tracking(cfg):
+    """
+    Start a Weights & Biases run if the config asks for it, otherwise return None
+    """
+    if cfg.get("tracking", "none") != "wandb":
+        return None
+
+    import wandb  # imported here, so wandb is only needed when tracking is on
+
+    return wandb.init(
+        project=cfg.get("wandb_project", "adversarial-robustness"),
+        name=cfg["name"],
+        config=cfg,
+    )
+
+
+def log_results(wb_run, cfg, results):
+    """
+    Log the final accuracies and a robustness curve (accuracy vs. epsilon) to wandb
+    """
+    import wandb
+
+    epsilons = cfg["eval"]["epsilons"]
+    attacks = cfg["eval"].get("attacks", [])
+
+    wb_run.summary["clean_acc"] = results["clean"]
+    for attack in attacks:
+        for eps, acc in zip(epsilons, results[attack]):
+            wb_run.summary[f"{attack}_acc_eps_{eps}"] = acc
+
+    if attacks:
+        wb_run.log({
+            "robustness_curve": wandb.plot.line_series(
+                xs=epsilons,
+                ys=[results[a] for a in attacks],
+                keys=attacks,
+                title=f"{cfg['name']}: accuracy vs. epsilon",
+                xname="epsilon",
+            )
+        })
+
+
 def run(cfg):
     """
     Train and evaluate one model as described by a config dict, and save the results
     """
     set_seed(cfg.get("seed", SEED))
+    wb_run = start_tracking(cfg)
     binary = cfg["task"] == "binary"
     t = cfg["train"]
     e = cfg["eval"]
@@ -83,6 +127,7 @@ def run(cfg):
         adv_epsilon=t.get("adv_epsilon"),
         adv_weight=t.get("adv_weight", 0.5),
         augment=AUGMENTATIONS[t.get("augment")],
+        log_fn=wb_run.log if wb_run is not None else None,
     )
 
     results = {"clean": evaluate_clean(model, test_loader, binary)}
@@ -111,17 +156,26 @@ def run(cfg):
         json.dump({"config": cfg, "epsilons": e["epsilons"], **results}, f, indent=2)
 
     print("saved to", out_dir)
+
+    if wb_run is not None:
+        log_results(wb_run, cfg, results)
+        wb_run.finish()
+
     return results
 
 
 def main():
     parser = argparse.ArgumentParser(description="Run adversarial robustness experiments")
     parser.add_argument("configs", nargs="+", help="one or more YAML config files")
+    parser.add_argument("--tracking", choices=["none", "wandb"], default=None,
+                        help="override the tracking setting of the config files")
     args = parser.parse_args()
 
     for path in args.configs:
         with open(path) as f:
             cfg = yaml.safe_load(f)
+        if args.tracking is not None:
+            cfg["tracking"] = args.tracking
         run(cfg)
 
 

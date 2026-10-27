@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "ruff", "jupyter"]
+dev = ["pytest", "ruff", "jupyter", "wandb"]
 
 [project.scripts]
 advrobust = "advrobust.cli:main"

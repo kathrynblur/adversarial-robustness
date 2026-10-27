@@ -222,3 +222,4 @@ data/
 saved_models/
 *.pt
 data
+wandb/

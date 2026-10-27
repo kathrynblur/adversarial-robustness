@@ -11,13 +11,11 @@ STL-10 is NOT downloaded on import, call load_stl10() when you need it
 
 """
 
-import random
-import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset, random_split
 from torchvision import datasets, transforms
 
-from .utils import SEED, device, set_seed
+from .utils import SEED, set_seed
 
 set_seed()
 

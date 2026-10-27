@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class BinaryLogReg(nn.Module):
     """
     Binary logistic regression model with one linear layer followed by a sigmoid.

@@ -110,6 +110,10 @@ def train(
             log_fn({"epoch": epoch, "train_loss": total_loss / total, "train_acc": total_correct / total})
 
         if epoch % 5 == 0 or epoch == 1:
-            print("epoch", epoch, "| loss:", round(total_loss / total, 4), "| train acc:", round(total_correct / total, 4))
+                        print(
+                "epoch", epoch,
+                "| loss:", round(total_loss / total, 4),
+                "| train acc:", round(total_correct / total, 4),
+            )
 
     return model

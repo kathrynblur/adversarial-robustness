@@ -11,8 +11,6 @@ It grew out of my bachelor thesis, *A Theoretical and Empirical Study of Adversa
 (BSc Data Science, KU Eichstätt-Ingolstadt). After the thesis, I turned the research code into a tested Python package
 with config-based experiments, experiment tracking, a REST API and a web demo.
 
-<!-- TODO: add the demo link once it is deployed -->
-
 **Live demo:** [https://huggingface.co/spaces/kathrynblur/adversarial-robustness](https://huggingface.co/spaces/kathrynblur/adversarial-robustness)
 
 ## Key findings
